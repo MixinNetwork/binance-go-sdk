@@ -83,7 +83,7 @@ func (m *keyManager) ExportAsMnemonic() (string, error) {
 }
 
 func (m *keyManager) ExportAsPrivateKey() (string, error) {
-	secpPrivateKey, ok := m.privKey.(secp256k1.PrivKeySecp256k1)
+	secpPrivateKey, ok := m.privKey.(secp256k1.PrivKey)
 	if !ok {
 		return "", fmt.Errorf(" Only PrivKeySecp256k1 key is supported ")
 	}
@@ -121,7 +121,7 @@ func (m *keyManager) recoveryFromMnemonic(mnemonic, keyPath string) error {
 	if err != nil {
 		return err
 	}
-	priKey := secp256k1.PrivKeySecp256k1(derivedPriv)
+	priKey := secp256k1.PrivKey(derivedPriv[:])
 	addr := ctypes.AccAddress(priKey.PubKey().Address())
 	if err != nil {
 		return err
@@ -154,7 +154,7 @@ func (m *keyManager) recoveryFromKeyStore(keystoreFile string, auth string) erro
 	}
 	var keyBytesArray [32]byte
 	copy(keyBytesArray[:], keyBytes[:32])
-	priKey := secp256k1.PrivKeySecp256k1(keyBytesArray)
+	priKey := secp256k1.PrivKey(keyBytesArray[:])
 	addr := ctypes.AccAddress(priKey.PubKey().Address())
 	m.addr = addr
 	m.privKey = priKey
@@ -172,7 +172,7 @@ func (m *keyManager) recoveryFromPrivateKey(privateKey string) error {
 	}
 	var keyBytesArray [32]byte
 	copy(keyBytesArray[:], priBytes[:32])
-	priKey := secp256k1.PrivKeySecp256k1(keyBytesArray)
+	priKey := secp256k1.PrivKey(keyBytesArray[:])
 	addr := ctypes.AccAddress(priKey.PubKey().Address())
 	m.addr = addr
 	m.privKey = priKey
@@ -256,7 +256,7 @@ func generateKeyStore(privateKey crypto.PrivKey, password string) (*EncryptedKey
 	cipherParamsJSON := cipherparamsJSON{IV: hex.EncodeToString(iv)}
 	derivedKey := pbkdf2.Key([]byte(password), salt, 262144, 32, sha256.New)
 	encryptKey := derivedKey[:32]
-	secpPrivateKey, ok := privateKey.(secp256k1.PrivKeySecp256k1)
+	secpPrivateKey, ok := privateKey.(secp256k1.PrivKey)
 	if !ok {
 		return nil, fmt.Errorf(" Only PrivKeySecp256k1 key is supported ")
 	}

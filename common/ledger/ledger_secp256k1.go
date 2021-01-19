@@ -39,14 +39,14 @@ type (
 	// cache the PubKey from the first call to use it later.
 	PrivKeyLedgerSecp256k1 struct {
 		crypto.PrivKey
-		pubkey secp256k1.PubKeySecp256k1
+		pubkey secp256k1.PubKey
 		path   DerivationPath
 		ledger LedgerSecp256k1
 	}
 )
 
 func GenLedgerSecp256k1Key(path DerivationPath, device LedgerSecp256k1) (*PrivKeyLedgerSecp256k1, error) {
-	var pk secp256k1.PubKeySecp256k1
+	var pk secp256k1.PubKey
 	pubkey, err := device.GetPublicKeySECP256K1(path)
 	if err != nil {
 		return nil, err

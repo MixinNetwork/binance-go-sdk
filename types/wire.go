@@ -9,6 +9,7 @@ import (
 
 func NewCodec() *amino.Codec {
 	cdc := amino.NewCodec()
+	// TODO
 	types.RegisterAmino(cdc)
 	ntypes.RegisterWire(cdc)
 	tx.RegisterCodec(cdc)
